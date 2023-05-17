@@ -15,6 +15,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"ys-tools/pkg/ec2b"
 	"ys-tools/pkg/types/definepb"
 
 	"google.golang.org/protobuf/proto"
@@ -102,6 +103,28 @@ func main() {
 
 	ctx, _ := json.MarshalIndent(currRegion, "", "    ")
 	fmt.Println(string(ctx))
+
+	ec2b, err := ec2b.Load(currRegion.ClientSecretKey)
+	if err != nil {
+		log.Fatalln("Failed to load ec2b key:", err)
+	}
+
+	regionCustomConfig := currRegion.RegionCustomConfigEncrypted
+	xor(regionCustomConfig, ec2b.Key())
+
+	var vv map[string]interface{}
+	if err := json.Unmarshal(regionCustomConfig, &vv); err != nil {
+		log.Fatalln("Failed to unmarshal json:", err)
+	}
+
+	ctx, _ = json.MarshalIndent(vv, "", "    ")
+	fmt.Println(string(ctx))
+}
+
+func xor(p, key []byte) {
+	for i := 0; i < len(p); i++ {
+		p[i] ^= key[i%4096]
+	}
 }
 
 func (r *PrivateKey) Decrypt(ciphertext []byte) ([]byte, error) {
