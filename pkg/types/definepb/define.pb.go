@@ -20,6 +20,91 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type PlatformType int32
+
+const (
+	PlatformType_EDITOR                   PlatformType = 0
+	PlatformType_IOS                      PlatformType = 1
+	PlatformType_ANDROID                  PlatformType = 2
+	PlatformType_PC                       PlatformType = 3
+	PlatformType_PS4                      PlatformType = 4
+	PlatformType_SERVER                   PlatformType = 5
+	PlatformType_CLOUD_ANDROID            PlatformType = 6
+	PlatformType_CLOUD_IOS                PlatformType = 7
+	PlatformType_PS5                      PlatformType = 8
+	PlatformType_CLOUD_WEB                PlatformType = 9
+	PlatformType_CLOUD_TV                 PlatformType = 10
+	PlatformType_CLOUD_MAC                PlatformType = 11
+	PlatformType_CLOUD_PC                 PlatformType = 12
+	PlatformType_CLOUD_THIRD_PARTY_MOBILE PlatformType = 13
+	PlatformType_CLOUD_THIRD_PARTY_PC     PlatformType = 14
+)
+
+// Enum value maps for PlatformType.
+var (
+	PlatformType_name = map[int32]string{
+		0:  "EDITOR",
+		1:  "IOS",
+		2:  "ANDROID",
+		3:  "PC",
+		4:  "PS4",
+		5:  "SERVER",
+		6:  "CLOUD_ANDROID",
+		7:  "CLOUD_IOS",
+		8:  "PS5",
+		9:  "CLOUD_WEB",
+		10: "CLOUD_TV",
+		11: "CLOUD_MAC",
+		12: "CLOUD_PC",
+		13: "CLOUD_THIRD_PARTY_MOBILE",
+		14: "CLOUD_THIRD_PARTY_PC",
+	}
+	PlatformType_value = map[string]int32{
+		"EDITOR":                   0,
+		"IOS":                      1,
+		"ANDROID":                  2,
+		"PC":                       3,
+		"PS4":                      4,
+		"SERVER":                   5,
+		"CLOUD_ANDROID":            6,
+		"CLOUD_IOS":                7,
+		"PS5":                      8,
+		"CLOUD_WEB":                9,
+		"CLOUD_TV":                 10,
+		"CLOUD_MAC":                11,
+		"CLOUD_PC":                 12,
+		"CLOUD_THIRD_PARTY_MOBILE": 13,
+		"CLOUD_THIRD_PARTY_PC":     14,
+	}
+)
+
+func (x PlatformType) Enum() *PlatformType {
+	p := new(PlatformType)
+	*p = x
+	return p
+}
+
+func (x PlatformType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PlatformType) Descriptor() protoreflect.EnumDescriptor {
+	return file_define_proto_enumTypes[0].Descriptor()
+}
+
+func (PlatformType) Type() protoreflect.EnumType {
+	return &file_define_proto_enumTypes[0]
+}
+
+func (x PlatformType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PlatformType.Descriptor instead.
+func (PlatformType) EnumDescriptor() ([]byte, []int) {
+	return file_define_proto_rawDescGZIP(), []int{0}
+}
+
 type RegionSimpleInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -957,10 +1042,24 @@ var file_define_proto_rawDesc = []byte{
 	0x0a, 0x0b, 0x73, 0x74, 0x6f, 0x70, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x18, 0x05, 0x20,
 	0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x53, 0x74, 0x6f, 0x70, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72,
 	0x49, 0x6e, 0x66, 0x6f, 0x48, 0x00, 0x52, 0x0a, 0x73, 0x74, 0x6f, 0x70, 0x53, 0x65, 0x72, 0x76,
-	0x65, 0x72, 0x42, 0x08, 0x0a, 0x06, 0x64, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x42, 0x1d, 0x5a, 0x1b,
-	0x79, 0x73, 0x2d, 0x74, 0x6f, 0x6f, 0x6c, 0x73, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x74, 0x79, 0x70,
-	0x65, 0x73, 0x2f, 0x64, 0x65, 0x66, 0x69, 0x6e, 0x65, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x65, 0x72, 0x42, 0x08, 0x0a, 0x06, 0x64, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x2a, 0xea, 0x01, 0x0a,
+	0x0c, 0x50, 0x6c, 0x61, 0x74, 0x66, 0x6f, 0x72, 0x6d, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0a, 0x0a,
+	0x06, 0x45, 0x44, 0x49, 0x54, 0x4f, 0x52, 0x10, 0x00, 0x12, 0x07, 0x0a, 0x03, 0x49, 0x4f, 0x53,
+	0x10, 0x01, 0x12, 0x0b, 0x0a, 0x07, 0x41, 0x4e, 0x44, 0x52, 0x4f, 0x49, 0x44, 0x10, 0x02, 0x12,
+	0x06, 0x0a, 0x02, 0x50, 0x43, 0x10, 0x03, 0x12, 0x07, 0x0a, 0x03, 0x50, 0x53, 0x34, 0x10, 0x04,
+	0x12, 0x0a, 0x0a, 0x06, 0x53, 0x45, 0x52, 0x56, 0x45, 0x52, 0x10, 0x05, 0x12, 0x11, 0x0a, 0x0d,
+	0x43, 0x4c, 0x4f, 0x55, 0x44, 0x5f, 0x41, 0x4e, 0x44, 0x52, 0x4f, 0x49, 0x44, 0x10, 0x06, 0x12,
+	0x0d, 0x0a, 0x09, 0x43, 0x4c, 0x4f, 0x55, 0x44, 0x5f, 0x49, 0x4f, 0x53, 0x10, 0x07, 0x12, 0x07,
+	0x0a, 0x03, 0x50, 0x53, 0x35, 0x10, 0x08, 0x12, 0x0d, 0x0a, 0x09, 0x43, 0x4c, 0x4f, 0x55, 0x44,
+	0x5f, 0x57, 0x45, 0x42, 0x10, 0x09, 0x12, 0x0c, 0x0a, 0x08, 0x43, 0x4c, 0x4f, 0x55, 0x44, 0x5f,
+	0x54, 0x56, 0x10, 0x0a, 0x12, 0x0d, 0x0a, 0x09, 0x43, 0x4c, 0x4f, 0x55, 0x44, 0x5f, 0x4d, 0x41,
+	0x43, 0x10, 0x0b, 0x12, 0x0c, 0x0a, 0x08, 0x43, 0x4c, 0x4f, 0x55, 0x44, 0x5f, 0x50, 0x43, 0x10,
+	0x0c, 0x12, 0x1c, 0x0a, 0x18, 0x43, 0x4c, 0x4f, 0x55, 0x44, 0x5f, 0x54, 0x48, 0x49, 0x52, 0x44,
+	0x5f, 0x50, 0x41, 0x52, 0x54, 0x59, 0x5f, 0x4d, 0x4f, 0x42, 0x49, 0x4c, 0x45, 0x10, 0x0d, 0x12,
+	0x18, 0x0a, 0x14, 0x43, 0x4c, 0x4f, 0x55, 0x44, 0x5f, 0x54, 0x48, 0x49, 0x52, 0x44, 0x5f, 0x50,
+	0x41, 0x52, 0x54, 0x59, 0x5f, 0x50, 0x43, 0x10, 0x0e, 0x42, 0x1d, 0x5a, 0x1b, 0x79, 0x73, 0x2d,
+	0x74, 0x6f, 0x6f, 0x6c, 0x73, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2f,
+	0x64, 0x65, 0x66, 0x69, 0x6e, 0x65, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -975,23 +1074,25 @@ func file_define_proto_rawDescGZIP() []byte {
 	return file_define_proto_rawDescData
 }
 
+var file_define_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_define_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_define_proto_goTypes = []interface{}{
-	(*RegionSimpleInfo)(nil),       // 0: RegionSimpleInfo
-	(*QueryRegionListHttpRsp)(nil), // 1: QueryRegionListHttpRsp
-	(*ForceUpdateInfo)(nil),        // 2: ForceUpdateInfo
-	(*StopServerInfo)(nil),         // 3: StopServerInfo
-	(*ResVersionConfig)(nil),       // 4: ResVersionConfig
-	(*RegionInfo)(nil),             // 5: RegionInfo
-	(*QueryCurrRegionHttpRsp)(nil), // 6: QueryCurrRegionHttpRsp
+	(PlatformType)(0),              // 0: PlatformType
+	(*RegionSimpleInfo)(nil),       // 1: RegionSimpleInfo
+	(*QueryRegionListHttpRsp)(nil), // 2: QueryRegionListHttpRsp
+	(*ForceUpdateInfo)(nil),        // 3: ForceUpdateInfo
+	(*StopServerInfo)(nil),         // 4: StopServerInfo
+	(*ResVersionConfig)(nil),       // 5: ResVersionConfig
+	(*RegionInfo)(nil),             // 6: RegionInfo
+	(*QueryCurrRegionHttpRsp)(nil), // 7: QueryCurrRegionHttpRsp
 }
 var file_define_proto_depIdxs = []int32{
-	0, // 0: QueryRegionListHttpRsp.region_list:type_name -> RegionSimpleInfo
-	4, // 1: RegionInfo.res_version_config:type_name -> ResVersionConfig
-	4, // 2: RegionInfo.next_res_version_config:type_name -> ResVersionConfig
-	5, // 3: QueryCurrRegionHttpRsp.region_info:type_name -> RegionInfo
-	2, // 4: QueryCurrRegionHttpRsp.force_update:type_name -> ForceUpdateInfo
-	3, // 5: QueryCurrRegionHttpRsp.stop_server:type_name -> StopServerInfo
+	1, // 0: QueryRegionListHttpRsp.region_list:type_name -> RegionSimpleInfo
+	5, // 1: RegionInfo.res_version_config:type_name -> ResVersionConfig
+	5, // 2: RegionInfo.next_res_version_config:type_name -> ResVersionConfig
+	6, // 3: QueryCurrRegionHttpRsp.region_info:type_name -> RegionInfo
+	3, // 4: QueryCurrRegionHttpRsp.force_update:type_name -> ForceUpdateInfo
+	4, // 5: QueryCurrRegionHttpRsp.stop_server:type_name -> StopServerInfo
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
@@ -1099,13 +1200,14 @@ func file_define_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_define_proto_rawDesc,
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_define_proto_goTypes,
 		DependencyIndexes: file_define_proto_depIdxs,
+		EnumInfos:         file_define_proto_enumTypes,
 		MessageInfos:      file_define_proto_msgTypes,
 	}.Build()
 	File_define_proto = out.File

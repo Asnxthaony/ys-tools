@@ -14,11 +14,13 @@ import (
 )
 
 const (
-	VERSION = "CNRELWin3.6.0"
+	DISPATCH_HOST = "dispatchcnglobal.yuanshen.com"
+	VERSION       = "CNRELWin3.6.0"
+	PLATFORM      = definepb.PlatformType_PC
 )
 
 func main() {
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://dispatchcnglobal.yuanshen.com/query_region_list?version=%s&lang=2&platform=3&binary=1&channel_id=1", VERSION), nil)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://%s/query_region_list?version=%s&lang=2&platform=%d&binary=1&channel_id=1", DISPATCH_HOST, VERSION, PLATFORM), nil)
 	if err != nil {
 		panic(err)
 	}
@@ -52,6 +54,9 @@ func main() {
 		log.Fatalln("Bad response, retCode:", regionList.Retcode)
 	}
 
+	ctx, _ := json.MarshalIndent(regionList, "", "    ")
+	fmt.Println(string(ctx))
+
 	ec2b, err := ec2b.Load(regionList.ClientSecretKey)
 	if err != nil {
 		log.Fatalln("Failed to load ec2b key:", err)
@@ -65,7 +70,7 @@ func main() {
 		log.Fatalln("Failed to unmarshal json:", err)
 	}
 
-	ctx, _ := json.MarshalIndent(v, "", "    ")
+	ctx, _ = json.MarshalIndent(v, "", "    ")
 	fmt.Println(string(ctx))
 }
 

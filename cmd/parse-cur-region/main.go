@@ -22,9 +22,11 @@ import (
 )
 
 const (
-	VERSION       = "OSRELWin3.6.0"
-	DISPATCH_SEED = "5a7f44b6a1aba0e2"
-	KEY_ID        = "5"
+	DISPATCH_HOST = "cngfdispatch.yuanshen.com"
+	VERSION       = "CNRELWin3.6.0"
+	PLATFORM      = definepb.PlatformType_PC
+	DISPATCH_SEED = "6afecbf1786dc983"
+	KEY_ID        = "4"
 )
 
 var (
@@ -48,7 +50,8 @@ func main() {
 		panic(err)
 	}
 
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://osasiadispatch.yuanshen.com/query_cur_region?version=%s&lang=2&platform=3&binary=1&channel_id=1&sub_channel_id=0&account_type=1&dispatchSeed=%s&key_id=%s", VERSION, DISPATCH_SEED, KEY_ID), nil)
+	url := fmt.Sprintf("https://%s/query_cur_region?version=%s&lang=2&platform=%d&binary=1&channel_id=1&sub_channel_id=0&account_type=1&dispatchSeed=%s&key_id=%s", DISPATCH_HOST, VERSION, PLATFORM, DISPATCH_SEED, KEY_ID)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		panic(err)
 	}
