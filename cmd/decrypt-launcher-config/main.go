@@ -14,7 +14,7 @@ var (
 )
 
 func main() {
-	p, err := os.ReadFile("data/hkrpg_os_32.txt")
+	p, err := os.ReadFile("data/hk4e_os_10.txt")
 	if err != nil {
 		panic(err)
 	}
