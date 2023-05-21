@@ -161,6 +161,33 @@ func loadSecrets() error {
 	for {
 		block, rest = pem.Decode(rest)
 		switch block.Type {
+		case "DISPATCH SERVER RSA PUBLIC KEY 1":
+			k, err := x509.ParsePKIXPublicKey(block.Bytes)
+			if err != nil {
+				return err
+			} else if k, ok := k.(*rsa.PublicKey); !ok {
+				return errors.New("invalid public key")
+			} else {
+				pubKeys["1"] = &PublicKey{k}
+			}
+		case "DISPATCH SERVER RSA PUBLIC KEY 2":
+			k, err := x509.ParsePKIXPublicKey(block.Bytes)
+			if err != nil {
+				return err
+			} else if k, ok := k.(*rsa.PublicKey); !ok {
+				return errors.New("invalid public key")
+			} else {
+				pubKeys["2"] = &PublicKey{k}
+			}
+		case "DISPATCH SERVER RSA PUBLIC KEY 3":
+			k, err := x509.ParsePKIXPublicKey(block.Bytes)
+			if err != nil {
+				return err
+			} else if k, ok := k.(*rsa.PublicKey); !ok {
+				return errors.New("invalid public key")
+			} else {
+				pubKeys["3"] = &PublicKey{k}
+			}
 		case "DISPATCH SERVER RSA PUBLIC KEY 4":
 			k, err := x509.ParsePKIXPublicKey(block.Bytes)
 			if err != nil {
@@ -178,6 +205,33 @@ func loadSecrets() error {
 				return errors.New("invalid public key")
 			} else {
 				pubKeys["5"] = &PublicKey{k}
+			}
+		case "DISPATCH CLIENT RSA PRIVATE KEY 1":
+			k, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+			if err != nil {
+				return err
+			} else if k, ok := k.(*rsa.PrivateKey); !ok {
+				return errors.New("invalid private key")
+			} else {
+				privKeys["1"] = &PrivateKey{k}
+			}
+		case "DISPATCH CLIENT RSA PRIVATE KEY 2":
+			k, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+			if err != nil {
+				return err
+			} else if k, ok := k.(*rsa.PrivateKey); !ok {
+				return errors.New("invalid private key")
+			} else {
+				privKeys["2"] = &PrivateKey{k}
+			}
+		case "DISPATCH CLIENT RSA PRIVATE KEY 3":
+			k, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+			if err != nil {
+				return err
+			} else if k, ok := k.(*rsa.PrivateKey); !ok {
+				return errors.New("invalid private key")
+			} else {
+				privKeys["3"] = &PrivateKey{k}
 			}
 		case "DISPATCH CLIENT RSA PRIVATE KEY 4":
 			k, err := x509.ParsePKCS8PrivateKey(block.Bytes)
