@@ -7,6 +7,7 @@
 | CNRELiOS3.6.0 | 24e8cbb8af855e68 |
 | CNRELAndroid3.6.0 | f6bd35789bd586da |
 | CNRELWin3.6.0 | 6afecbf1786dc983 |
+| CNRELWin3.7.0 | 916fa790e214f718 |
 
 ## OSREL
 

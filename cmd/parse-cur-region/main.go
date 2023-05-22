@@ -23,9 +23,12 @@ import (
 
 const (
 	DISPATCH_HOST = "cngfdispatch.yuanshen.com"
-	VERSION       = "CNRELWin3.6.0"
+	VERSION       = "CNRELWin3.7.0"
+	LANG          = definepb.LanguageType_LANGUAGE_SC
 	PLATFORM      = definepb.PlatformType_PC
-	DISPATCH_SEED = "6afecbf1786dc983"
+	CHANNEL_ID    = definepb.ChannelIdType_CHANNEL_ID_MIHOYO
+	ACCOUNT_TYPE  = definepb.AccountType_ACCOUNT_MIHOYO
+	DISPATCH_SEED = "916fa790e214f718"
 	KEY_ID        = "4"
 )
 
@@ -50,7 +53,7 @@ func main() {
 		panic(err)
 	}
 
-	url := fmt.Sprintf("https://%s/query_cur_region?version=%s&lang=2&platform=%d&binary=1&channel_id=1&sub_channel_id=0&account_type=1&dispatchSeed=%s&key_id=%s", DISPATCH_HOST, VERSION, PLATFORM, DISPATCH_SEED, KEY_ID)
+	url := fmt.Sprintf("https://%s/query_cur_region?version=%s&lang=%d&platform=%d&binary=1&channel_id=%d&sub_channel_id=0&account_type=1&dispatchSeed=%s&key_id=%s", DISPATCH_HOST, VERSION, LANG, PLATFORM, CHANNEL_ID, DISPATCH_SEED, KEY_ID)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		panic(err)

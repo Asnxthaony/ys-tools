@@ -2,6 +2,64 @@ syntax = "proto3";
 
 option go_package = "ys-tools/pkg/types/definepb";
 
+enum AccountType {
+  ACCOUNT_MIHOYO_GUEST = 0;
+  ACCOUNT_MIHOYO = 1;
+  ACCOUNT_XIAOMI = 11;
+  ACCOUNT_COOLPAD = 12;
+  ACCOUNT_YYB = 13;
+  ACCOUNT_BILI = 14;
+  ACCOUNT_HUAWEI = 15;
+  ACCOUNT_MEIZU = 16;
+  ACCOUNT_360 = 17;
+  ACCOUNT_OPPO = 18;
+  ACCOUNT_VIVO = 19;
+  ACCOUNT_UC = 20;
+  ACCOUNT_WANDOJIA = 21;
+  ACCOUNT_LENOVO = 22;
+  ACCOUNT_JINLI = 23;
+  ACCOUNT_BAIDU = 25;
+  ACCOUNT_DANGLE = 26;
+}
+
+enum ChannelIdType {
+  CHANNEL_ID_NONE = 0;
+  CHANNEL_ID_MIHOYO = 1;
+  CHANNEL_ID_XIAOMI = 11;
+  CHANNEL_ID_COOLPAD = 12;
+  CHANNEL_ID_YYB = 13;
+  CHANNEL_ID_BILI = 14;
+  CHANNEL_ID_HUAWEI = 15;
+  CHANNEL_ID_MEIZU = 16;
+  CHANNEL_ID_360 = 17;
+  CHANNEL_ID_OPPO = 18;
+  CHANNEL_ID_VIVO = 19;
+  CHANNEL_ID_UC = 20;
+  CHANNEL_ID_LENOVO = 22;
+  CHANNEL_ID_JINLI = 23;
+  CHANNEL_ID_BAIDU = 25;
+  CHANNEL_ID_DANGLE = 26;
+}
+
+enum LanguageType {
+  LANGUAGE_NONE = 0;
+  LANGUAGE_EN = 1; // 英语
+  LANGUAGE_SC = 2; // 简体中文
+  LANGUAGE_TC = 3; // 繁体中文
+  LANGUAGE_FR = 4; // 法语
+  LANGUAGE_DE = 5; // 德语
+  LANGUAGE_ES = 6; // 西班牙语
+  LANGUAGE_PT = 7; // 葡萄牙语
+  LANGUAGE_RU = 8; // 俄语
+  LANGUAGE_JP = 9; // 日语
+  LANGUAGE_KR = 10; // 韩语
+  LANGUAGE_TH = 11; // 泰语
+  LANGUAGE_VN = 12; // 越南语
+  LANGUAGE_ID = 13; // 印尼语
+  LANGUAGE_TR = 14; // 土耳其语
+  LANGUAGE_IT = 15; // 意大利语
+}
+
 enum PlatformType {
   EDITOR = 0;
   IOS = 1;

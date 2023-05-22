@@ -15,12 +15,15 @@ import (
 
 const (
 	DISPATCH_HOST = "dispatchcnglobal.yuanshen.com"
-	VERSION       = "CNRELWin3.6.0"
+	VERSION       = "CNRELWin3.7.0"
+	LANG          = definepb.LanguageType_LANGUAGE_SC
 	PLATFORM      = definepb.PlatformType_PC
+	CHANNEL_ID    = definepb.ChannelIdType_CHANNEL_ID_MIHOYO
 )
 
 func main() {
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://%s/query_region_list?version=%s&lang=2&platform=%d&binary=1&channel_id=1", DISPATCH_HOST, VERSION, PLATFORM), nil)
+	url := fmt.Sprintf("https://%s/query_region_list?version=%s&lang=%d&platform=%d&binary=1&channel_id=%d", DISPATCH_HOST, VERSION, LANG, PLATFORM, CHANNEL_ID)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		panic(err)
 	}
