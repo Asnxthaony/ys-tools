@@ -13,12 +13,11 @@ const (
 	DISPATCH_HOST = "dispatchcnglobal.yuanshen.com"
 	VERSION       = "CNRELWin3.7.0"
 	LANG          = int32(definepb.LanguageType_LANGUAGE_SC)
-	PLATFORM      = int32(definepb.PlatformType_PC)
 	CHANNEL_ID    = int32(definepb.ChannelIdType_CHANNEL_ID_MIHOYO)
 )
 
 func main() {
-	regionList, err := mi.GetRegionList(VERSION, LANG, PLATFORM, CHANNEL_ID)
+	regionList, err := mi.GetRegionList(VERSION, LANG, CHANNEL_ID)
 	if err != nil {
 		log.Fatalln("Failed to get region list:", err)
 	}

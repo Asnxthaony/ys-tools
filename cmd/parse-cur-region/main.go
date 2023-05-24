@@ -13,7 +13,6 @@ const (
 	DISPATCH_HOST = "cngfdispatch.yuanshen.com"
 	VERSION       = "CNRELWin3.7.0"
 	LANG          = int32(definepb.LanguageType_LANGUAGE_SC)
-	PLATFORM      = int32(definepb.PlatformType_PC)
 	CHANNEL_ID    = int32(definepb.ChannelIdType_CHANNEL_ID_MIHOYO)
 	ACCOUNT_TYPE  = int32(definepb.AccountType_ACCOUNT_MIHOYO)
 	DISPATCH_SEED = "916fa790e214f718"
@@ -21,7 +20,7 @@ const (
 )
 
 func main() {
-	currRegion, err := mi.GetCurrRegion(VERSION, LANG, PLATFORM, CHANNEL_ID, ACCOUNT_TYPE, DISPATCH_SEED)
+	currRegion, err := mi.GetCurrRegion(VERSION, LANG, CHANNEL_ID, ACCOUNT_TYPE, DISPATCH_SEED)
 	if err != nil {
 		log.Fatalln("Failed to get curr region:", err)
 	}

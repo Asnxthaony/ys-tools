@@ -139,11 +139,12 @@ func loadSecrets() error {
 	return nil
 }
 
-func GetRegionList(version string, lang int32, platform int32, channelId int32) (*definepb.QueryRegionListHttpRsp, error) {
+func GetRegionList(version string, lang int32, channelId int32) (*definepb.QueryRegionListHttpRsp, error) {
 	dispatchHost := "dispatchcnglobal.yuanshen.com"
 	if strings.HasPrefix(version, OS_PREFIX) {
 		dispatchHost = "dispatchosglobal.yuanshen.com"
 	}
+	platform := GetPlatformByVersion(version)
 
 	url := fmt.Sprintf("https://%s/query_region_list?version=%s&lang=%d&platform=%d&binary=1&channel_id=%d", dispatchHost, version, lang, platform, channelId)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -179,14 +180,14 @@ func GetRegionList(version string, lang int32, platform int32, channelId int32) 
 	return regionList, nil
 }
 
-func GetCurrRegion(version string, lang int32, platform int32, channelId int32, accountType int32, dispatchSeed string) (*definepb.QueryCurrRegionHttpRsp, error) {
+func GetCurrRegion(version string, lang int32, channelId int32, accountType int32, dispatchSeed string) (*definepb.QueryCurrRegionHttpRsp, error) {
 	dispatchHost := "cngfdispatch.yuanshen.com"
 	keyId := "4"
-
 	if strings.HasPrefix(version, OS_PREFIX) {
 		dispatchHost = "osasiadispatch.yuanshen.com"
 		keyId = "5"
 	}
+	platform := GetPlatformByVersion(version)
 
 	url := fmt.Sprintf("https://%s/query_cur_region?version=%s&lang=%d&platform=%d&binary=1&channel_id=%d&sub_channel_id=0&account_type=1&dispatchSeed=%s&key_id=%s", dispatchHost, version, lang, platform, channelId, dispatchSeed, keyId)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -239,4 +240,20 @@ func GetCurrRegion(version string, lang int32, platform int32, channelId int32, 
 	}
 
 	return currRegion, nil
+}
+
+func GetPlatformByVersion(version string) int32 {
+	if strings.Contains(version, "iOS") {
+		return int32(definepb.PlatformType_IOS)
+	} else if strings.Contains(version, "Android") {
+		return int32(definepb.PlatformType_ANDROID)
+	} else if strings.Contains(version, "Win") {
+		return int32(definepb.PlatformType_PC)
+	} else if strings.Contains(version, "PS4") {
+		return int32(definepb.PlatformType_PS4)
+	} else if strings.Contains(version, "PS5") {
+		return int32(definepb.PlatformType_PS5)
+	}
+
+	return int32(definepb.PlatformType_EDITOR)
 }
