@@ -23,12 +23,12 @@ func main() {
 		log.Fatalln("Failed to get region list:", err)
 	}
 
-	if regionList.Retcode != 0 {
-		log.Fatalln("Bad response, retCode:", regionList.Retcode)
-	}
-
 	ctx, _ := json.MarshalIndent(regionList, "", "    ")
 	fmt.Println(string(ctx))
+
+	if regionList.Retcode != 0 {
+		return
+	}
 
 	ec2b, err := ec2b.Load(regionList.ClientSecretKey)
 	if err != nil {
