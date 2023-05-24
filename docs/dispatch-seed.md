@@ -15,3 +15,4 @@
 | :-: | :-: |
 | OSRELAndroid3.6.0 | b89009325796c5cf |
 | OSRELWin3.6.0 | 5a7f44b6a1aba0e2 |
+| OSRELWin3.7.0 | 31c339cb23bd65a2 |
