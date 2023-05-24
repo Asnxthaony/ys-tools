@@ -10,13 +10,11 @@ import (
 )
 
 const (
-	DISPATCH_HOST = "cngfdispatch.yuanshen.com"
 	VERSION       = "CNRELWin3.7.0"
 	LANG          = int32(definepb.LanguageType_LANGUAGE_SC)
 	CHANNEL_ID    = int32(definepb.ChannelIdType_CHANNEL_ID_MIHOYO)
 	ACCOUNT_TYPE  = int32(definepb.AccountType_ACCOUNT_MIHOYO)
 	DISPATCH_SEED = "916fa790e214f718"
-	KEY_ID        = "4"
 )
 
 func main() {

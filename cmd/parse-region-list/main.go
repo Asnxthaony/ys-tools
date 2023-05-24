@@ -10,10 +10,9 @@ import (
 )
 
 const (
-	DISPATCH_HOST = "dispatchcnglobal.yuanshen.com"
-	VERSION       = "CNRELWin3.7.0"
-	LANG          = int32(definepb.LanguageType_LANGUAGE_SC)
-	CHANNEL_ID    = int32(definepb.ChannelIdType_CHANNEL_ID_MIHOYO)
+	VERSION    = "CNRELWin3.7.0"
+	LANG       = int32(definepb.LanguageType_LANGUAGE_SC)
+	CHANNEL_ID = int32(definepb.ChannelIdType_CHANNEL_ID_MIHOYO)
 )
 
 func main() {
