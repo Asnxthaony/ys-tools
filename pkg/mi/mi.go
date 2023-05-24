@@ -184,7 +184,7 @@ func GetCurrRegion(version string, lang int32, platform int32, channelId int32, 
 	keyId := "4"
 
 	if strings.HasPrefix(version, OS_PREFIX) {
-		dispatchHost = "dispatchosglobal.yuanshen.com"
+		dispatchHost = "osasiadispatch.yuanshen.com"
 		keyId = "5"
 	}
 
