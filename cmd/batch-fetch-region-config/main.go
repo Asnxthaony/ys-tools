@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"sync"
-	"ys-tools/pkg/ec2b"
 	"ys-tools/pkg/mi"
 	"ys-tools/pkg/types/definepb"
 )
@@ -86,17 +85,14 @@ func main() {
 
 			if regionList.Retcode != 0 {
 				log.Printf("[%s] Bad retcode: %v", version, regionList.Retcode)
-				//	return
-			}
-
-			ec2b, err := ec2b.Load(regionList.ClientSecretKey)
-			if err != nil {
-				log.Printf("[%s] Failed to load ec2b key: %v", version, err)
 				return
 			}
 
-			clientCustomConfig := regionList.ClientCustomConfigEncrypted
-			xor(clientCustomConfig, ec2b.Key())
+			clientCustomConfig, err := mi.DecryptEncryptedCustomConfig(regionList.ClientSecretKey, regionList.ClientCustomConfigEncrypted)
+			if err != nil {
+				log.Printf("[%s] Failed to decrypt client custom config: %v", version, err)
+				return
+			}
 
 			var v map[string]interface{}
 			if err := json.Unmarshal(clientCustomConfig, &v); err != nil {
@@ -111,10 +107,4 @@ func main() {
 		wg.Wait()
 	}
 
-}
-
-func xor(p, key []byte) {
-	for i := 0; i < len(p); i++ {
-		p[i] ^= key[i%4096]
-	}
 }

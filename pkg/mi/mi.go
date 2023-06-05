@@ -12,13 +12,15 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"ys-tools/pkg/ec2b"
 	"ys-tools/pkg/types/definepb"
 
 	"google.golang.org/protobuf/proto"
 )
 
 const (
-	OS_PREFIX = "OS"
+	OS_PREFIX   = "OS"
+	OSCB_PREFIX = "OSCB"
 )
 
 var (
@@ -181,15 +183,19 @@ func GetRegionList(version string, lang int32, channelId int32) (*definepb.Query
 }
 
 func GetCurrRegion(version string, lang int32, channelId int32, accountType int32, dispatchSeed string) (*definepb.QueryCurrRegionHttpRsp, error) {
-	dispatchHost := "cngfdispatch.yuanshen.com"
+	dispatchHost := "https://cngfdispatch.yuanshen.com"
 	keyId := "4"
 	if strings.HasPrefix(version, OS_PREFIX) {
-		dispatchHost = "osasiadispatch.yuanshen.com"
+		if strings.HasPrefix(version, OSCB_PREFIX) {
+			dispatchHost = "http://18.222.82.186:22401"
+		} else {
+			dispatchHost = "https://osasiadispatch.yuanshen.com"
+		}
 		keyId = "5"
 	}
 	platform := GetPlatformByVersion(version)
 
-	url := fmt.Sprintf("https://%s/query_cur_region?version=%s&lang=%d&platform=%d&binary=1&channel_id=%d&sub_channel_id=0&account_type=1&dispatchSeed=%s&key_id=%s", dispatchHost, version, lang, platform, channelId, dispatchSeed, keyId)
+	url := fmt.Sprintf("%s/query_cur_region?version=%s&lang=%d&platform=%d&binary=1&channel_id=%d&sub_channel_id=0&account_type=1&dispatchSeed=%s&key_id=%s", dispatchHost, version, lang, platform, channelId, dispatchSeed, keyId)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return &definepb.QueryCurrRegionHttpRsp{}, err
@@ -242,6 +248,18 @@ func GetCurrRegion(version string, lang int32, channelId int32, accountType int3
 	return currRegion, nil
 }
 
+func DecryptEncryptedCustomConfig(clientSecretKey, encryptedCustomConfig []byte) ([]byte, error) {
+	ec2b, err := ec2b.Load(clientSecretKey)
+	if err != nil {
+		return nil, errors.New("failed to load ec2b key")
+	}
+
+	regionCustomConfig := encryptedCustomConfig
+	xor(regionCustomConfig, ec2b.Key())
+
+	return regionCustomConfig, nil
+}
+
 func GetPlatformByVersion(version string) int32 {
 	if strings.Contains(version, "iOS") {
 		return int32(definepb.PlatformType_IOS)
@@ -256,4 +274,10 @@ func GetPlatformByVersion(version string) int32 {
 	}
 
 	return int32(definepb.PlatformType_EDITOR)
+}
+
+func xor(p, key []byte) {
+	for i := 0; i < len(p); i++ {
+		p[i] ^= key[i%4096]
+	}
 }

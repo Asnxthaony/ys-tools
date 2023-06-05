@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"ys-tools/pkg/ec2b"
 	"ys-tools/pkg/mi"
 	"ys-tools/pkg/types/definepb"
 )
@@ -30,13 +29,10 @@ func main() {
 		return
 	}
 
-	ec2b, err := ec2b.Load(currRegion.ClientSecretKey)
+	regionCustomConfig, err := mi.DecryptEncryptedCustomConfig(currRegion.ClientSecretKey, currRegion.RegionCustomConfigEncrypted)
 	if err != nil {
-		log.Fatalln("Failed to load ec2b key:", err)
+		log.Fatalln("Failed to decrypt region custom config:", err)
 	}
-
-	regionCustomConfig := currRegion.RegionCustomConfigEncrypted
-	xor(regionCustomConfig, ec2b.Key())
 
 	var vv map[string]interface{}
 	if err := json.Unmarshal(regionCustomConfig, &vv); err != nil {
@@ -45,10 +41,4 @@ func main() {
 
 	ctx, _ = json.MarshalIndent(vv, "", "    ")
 	fmt.Println(string(ctx))
-}
-
-func xor(p, key []byte) {
-	for i := 0; i < len(p); i++ {
-		p[i] ^= key[i%4096]
-	}
 }
