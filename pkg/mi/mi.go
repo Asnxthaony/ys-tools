@@ -275,9 +275,3 @@ func GetPlatformByVersion(version string) int32 {
 
 	return int32(definepb.PlatformType_EDITOR)
 }
-
-func xor(p, key []byte) {
-	for i := 0; i < len(p); i++ {
-		p[i] ^= key[i%4096]
-	}
-}
