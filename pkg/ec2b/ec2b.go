@@ -1,12 +1,13 @@
 package ec2b
 
 import (
-	"crypto/rand"
 	"encoding/binary"
-	"fmt"
+	"errors"
 
 	"ys-tools/pkg/rand/mt19937"
 )
+
+var ErrInvalidKey = errors.New("invalid ec2b key")
 
 type Ec2b struct {
 	key  []byte
@@ -16,37 +17,31 @@ type Ec2b struct {
 }
 
 func Load(b []byte) (*Ec2b, error) {
-	if len(b) < 4+4+16+4+2048 {
-		return nil, fmt.Errorf("invalid ec2b key")
+	if len(b) < 2076 { // Magic(4) + KeyLen(4) + Key(16) + DataLen(4) + Data(2048)
+		return nil, ErrInvalidKey
 	}
+
 	if string(b[0:4]) != "Ec2b" {
-		return nil, fmt.Errorf("invalid ec2b key")
+		return nil, ErrInvalidKey
 	}
-	keyLen := binary.LittleEndian.Uint32(b[4:])
+
+	keyLen := binary.LittleEndian.Uint32(b[4:8])
 	if keyLen != 16 {
-		return nil, fmt.Errorf("invalid ec2b key")
+		return nil, ErrInvalidKey
 	}
-	dataLen := binary.LittleEndian.Uint32(b[24:])
+
+	dataLen := binary.LittleEndian.Uint32(b[24:28])
 	if dataLen != 2048 {
-		return nil, fmt.Errorf("invalid ec2b key")
+		return nil, ErrInvalidKey
 	}
+
 	e := &Ec2b{
 		key:  b[8:24],
 		data: b[28 : 28+2048],
 	}
 	e.init()
-	return e, nil
-}
 
-func NewEc2b() *Ec2b {
-	e := &Ec2b{
-		key:  make([]byte, 16),
-		data: make([]byte, 2048),
-	}
-	_, _ = rand.Read(e.key)
-	_, _ = rand.Read(e.data)
-	e.init()
-	return e
+	return e, nil
 }
 
 func (e *Ec2b) init() {
@@ -56,23 +51,27 @@ func (e *Ec2b) init() {
 	e.SetSeed(getSeed(k, e.data))
 }
 
-func (e *Ec2b) Bytes() []byte {
-	b := make([]byte, 4+4+16+4+2048)
-	copy(b[0:4], []byte("Ec2b"))
-	binary.LittleEndian.PutUint32(b[4:], 16)
-	copy(b[8:], e.key)
-	binary.LittleEndian.PutUint32(b[24:], 2048)
-	copy(b[28:], e.data)
-	return b
+func getSeed(key, data []byte) uint64 {
+	v := ^uint64(0xCEAC3B5A867837AC)
+	v ^= binary.LittleEndian.Uint64(key[0:8])
+	v ^= binary.LittleEndian.Uint64(key[8:16])
+
+	for i := 0; i < len(data); i += 8 {
+		v ^= binary.LittleEndian.Uint64(data[i:])
+	}
+
+	return v
 }
 
 func (e *Ec2b) SetSeed(seed uint64) {
 	e.seed = seed
+
 	r := mt19937.NewRand64()
 	r.Seed(int64(e.seed))
+
 	e.temp = make([]byte, 4096)
-	for i := 0; i < 4096>>3; i++ {
-		binary.LittleEndian.PutUint64(e.temp[i<<3:], r.Uint64())
+	for i := 0; i < len(e.temp); i += 8 {
+		binary.LittleEndian.PutUint64(e.temp[i:], r.Uint64())
 	}
 }
 
@@ -86,85 +85,50 @@ func (e *Ec2b) Xor(data []byte) {
 }
 
 func keyScramble(key []byte) {
-	var roundKeys [11][16]byte
-	for r := 0; r < 11; r++ {
-		for i := 0; i < 16; i++ {
-			for j := 0; j < 16; j++ {
-				idx := (r << 8) + (i << 4) + j
-				roundKeys[r][i] ^= aesXorTable[1][idx] ^ aesXorTable[0][idx]
-			}
-		}
+	_ = key[15] // early bounds check
+	s0 := binary.BigEndian.Uint32(key[0:4])
+	s1 := binary.BigEndian.Uint32(key[4:8])
+	s2 := binary.BigEndian.Uint32(key[8:12])
+	s3 := binary.BigEndian.Uint32(key[12:16])
+
+	// First round just XORs input with key.
+	s0 ^= xk[0]
+	s1 ^= xk[1]
+	s2 ^= xk[2]
+	s3 ^= xk[3]
+
+	// Middle rounds shuffle using tables.
+	// Number of rounds is set by length of expanded key.
+	nr := len(xk)/4 - 2 // - 2: one above, one more below
+	k := 4
+	var t0, t1, t2, t3 uint32
+	for r := 0; r < nr; r++ {
+		t0 = xk[k+0] ^ td0[uint8(s0>>24)] ^ td1[uint8(s3>>16)] ^ td2[uint8(s2>>8)] ^ td3[uint8(s1)]
+		t1 = xk[k+1] ^ td0[uint8(s1>>24)] ^ td1[uint8(s0>>16)] ^ td2[uint8(s3>>8)] ^ td3[uint8(s2)]
+		t2 = xk[k+2] ^ td0[uint8(s2>>24)] ^ td1[uint8(s1>>16)] ^ td2[uint8(s0>>8)] ^ td3[uint8(s3)]
+		t3 = xk[k+3] ^ td0[uint8(s3>>24)] ^ td1[uint8(s2>>16)] ^ td2[uint8(s1>>8)] ^ td3[uint8(s0)]
+		k += 4
+		s0, s1, s2, s3 = t0, t1, t2, t3
 	}
-	xorRoundKey(key, roundKeys[0][:])
-	for r := 1; r < 10; r++ {
-		subBytesInv(key)
-		shiftRowsInv(key)
-		mixColsInv(key)
-		xorRoundKey(key, roundKeys[r][:])
-	}
-	subBytesInv(key)
-	shiftRowsInv(key)
-	xorRoundKey(key, roundKeys[10][:])
+
+	// Last round uses s-box directly and XORs to produce output.
+	s0 = uint32(sbox1[t0>>24])<<24 | uint32(sbox1[t3>>16&0xff])<<16 | uint32(sbox1[t2>>8&0xff])<<8 | uint32(sbox1[t1&0xff])
+	s1 = uint32(sbox1[t1>>24])<<24 | uint32(sbox1[t0>>16&0xff])<<16 | uint32(sbox1[t3>>8&0xff])<<8 | uint32(sbox1[t2&0xff])
+	s2 = uint32(sbox1[t2>>24])<<24 | uint32(sbox1[t1>>16&0xff])<<16 | uint32(sbox1[t0>>8&0xff])<<8 | uint32(sbox1[t3&0xff])
+	s3 = uint32(sbox1[t3>>24])<<24 | uint32(sbox1[t2>>16&0xff])<<16 | uint32(sbox1[t1>>8&0xff])<<8 | uint32(sbox1[t0&0xff])
+
+	s0 ^= xk[k+0]
+	s1 ^= xk[k+1]
+	s2 ^= xk[k+2]
+	s3 ^= xk[k+3]
+
+	_ = key[15] // early bounds check
+	binary.BigEndian.PutUint32(key[0:4], s0)
+	binary.BigEndian.PutUint32(key[4:8], s1)
+	binary.BigEndian.PutUint32(key[8:12], s2)
+	binary.BigEndian.PutUint32(key[12:16], s3)
+
 	for i := 0; i < 16; i++ {
-		key[i] ^= keyXorTable[i]
+		key[i] ^= iv[i]
 	}
-}
-
-func xorRoundKey(key, roundKey []byte) {
-	for i := 0; i < 16; i++ {
-		key[i] ^= roundKey[i]
-	}
-}
-
-func subBytes(key []byte) {
-	for i := 0; i < 16; i++ {
-		key[i] = lookupSbox[key[i]]
-	}
-}
-
-func subBytesInv(key []byte) {
-	for i := 0; i < 16; i++ {
-		key[i] = lookupSboxInv[key[i]]
-	}
-}
-
-func shiftRows(key []byte) {
-	var temp [16]byte
-	copy(temp[:], key[:])
-	for i := 0; i < 16; i++ {
-		key[i] = temp[shiftRowsTable[i]]
-	}
-}
-
-func shiftRowsInv(key []byte) {
-	var temp [16]byte
-	copy(temp[:], key[:])
-	for i := 0; i < 16; i++ {
-		key[i] = temp[shiftRowsTableInv[i]]
-	}
-}
-
-func mixColInv(key []byte) {
-	a0, a1, a2, a3 := key[0], key[1], key[2], key[3]
-	key[0] = lookupG14[a0] ^ lookupG9[a3] ^ lookupG13[a2] ^ lookupG11[a1]
-	key[1] = lookupG14[a1] ^ lookupG9[a0] ^ lookupG13[a3] ^ lookupG11[a2]
-	key[2] = lookupG14[a2] ^ lookupG9[a1] ^ lookupG13[a0] ^ lookupG11[a3]
-	key[3] = lookupG14[a3] ^ lookupG9[a2] ^ lookupG13[a1] ^ lookupG11[a0]
-}
-
-func mixColsInv(key []byte) {
-	mixColInv(key[0:])
-	mixColInv(key[4:])
-	mixColInv(key[8:])
-	mixColInv(key[12:])
-}
-
-func getSeed(key, data []byte) uint64 {
-	v := ^uint64(0xCEAC3B5A867837AC)
-	v ^= binary.LittleEndian.Uint64(key[0:])
-	v ^= binary.LittleEndian.Uint64(key[8:])
-	for i := 0; i < len(data)>>3; i++ {
-		v ^= binary.LittleEndian.Uint64(data[i<<3:])
-	}
-	return v
 }

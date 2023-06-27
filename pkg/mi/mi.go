@@ -255,7 +255,7 @@ func DecryptEncryptedCustomConfig(clientSecretKey, encryptedCustomConfig []byte)
 	}
 
 	regionCustomConfig := encryptedCustomConfig
-	xor(regionCustomConfig, ec2b.Key())
+	ec2b.Xor(regionCustomConfig)
 
 	return regionCustomConfig, nil
 }
